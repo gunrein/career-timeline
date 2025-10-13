@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Career timeline as of October 2025</title>
+
+  <style>
+    main {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+<main>
+  <section class="timeline-container">
+    <h2>Timeline</h2>
+    <svg width="800" height="800" id="timeline-svg">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+        </marker>
+      </defs>
+      <path id="timeline-path" d="M20,230 Q40,205 50,230 T90,230" fill="none" stroke="darkgreen" stroke-width="2" />
+    </svg>
+  </section>
+
+  <section>
+    <h2>Details</h2>
+    <p id="detailsLabel">Label</p>
+    <p id="detailsMonth">June 2023</p>
+    <ul id="detailsHighlights">
+      <li>Highlight 1</li>
+      <li>Highlight 2</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+  /**
+   * @typedef {Object} Event
+   * @property {String} label
+   * @property {number} month (1 is January, 12 is December)
+   * @property {number} year the calendar year
+   * @property {String[]} highlights
+   */
+  /**
+   * @param {String} label
+   * @param {number} month
+   * @param {number} year
+   * @param {String[]} highlights
+   * @return {Event}
+   */
+  function event(label, month, year, highlights) {
+    return {
+      label,
+      month,
+      year,
+      highlights
+    }
+  }
+
+  // The timeline is from December 1986 to October 2025
+  // const monthCount = (2025 - 1986) * 12;
+  const monthCount = 22; // temporary
+  console.log(`Months: ${monthCount}`);
+
+  /**
+   * @typedef {Object} Point
+   * @property {number} x
+   * @property {number} y
+   */
+  /**
+   * Constructs a Point from the given (`x`, `y`) coordinates.
+   * @param {number} x
+   * @param {number} y
+   * @return {Point}
+   */
+  function point(x, y) {
+    return { x, y }
+  }
+
+  /**
+   * Represents a `C` cubic bezier curve in an SVG `<path>` element.
+   * @typedef {Object} PathCubic
+   * @property {Point} one
+   * @property {Point} two
+   * @property {Point} end
+   */
+  /**
+   * Constructs a PathCubic
+   * @param {Point} one
+   * @param {Point} two
+   * @param {Point} end
+   * @return {PathCubic}
+   */
+  function pathCubic(one, two, end) {
+    return { one, two, end };
+  }
+
+  // The timeline visualize is rendered as an Archimedean spiral
+  // https://en.wikipedia.org/wiki/Archimedean_spiral
+  // One cycle of the spiral represents a year, so the radians per month is calculated as
+  // 2*pi radians per year = 2*pi / 12 radians per month
+  const radiansPerMonth = Math.PI / 6;
+
+  /**
+   * The `beta` parameter for the polar equation `r = beta * phi`.
+   * @type number
+   */
+  const beta = 15;
+
+  /** @type {Point} */
+  const origin = point(250, 250);
+
+  /** @type {PathCubic[]} */
+  const pathOfCubic = [];
+
+
+  // TODO switch this to stop rendering at the currently-selected month
+  for (let i = 1; i < monthCount; i++) {
+    // Each segment of the spiral is rendered as an SVG `path` utilizing the `C` command
+    // for a cubic Bézier curve.
+    // The starting point for `C` is the ending of the previous path segment.
+    const startPhi = (i - 1) * radiansPerMonth;
+    const startR = beta * startPhi;
+    const startX = startR * Math.cos(startPhi) + origin.x;
+    const startY = startR * Math.sin(startPhi) + origin.y;
+
+    // The ending point for `C` is the location of the current month.
+    const endPhi = i * radiansPerMonth;
+    const endR = beta * endPhi;
+    const endX = endR * Math.cos(endPhi) + origin.x;
+    const endY = endR * Math.sin(endPhi) + origin.y;
+
+    // The middle control point is an approximation where phi is set to the radians halfway between the previous
+    // month and the current month, and then shifted out from the origin wider by 1/20 of beta. Visually this
+    // seems to approximate the spiral well and scales up and down reasonably.
+    const midPhi = startPhi + ((endPhi - startPhi) / 2.0);
+    const midR = (beta + (beta / 20.0)) * midPhi;
+    const midX = midR * Math.cos(midPhi) + origin.x;
+    const midY = midR * Math.sin(midPhi) + origin.y;
+
+    pathOfCubic.push(pathCubic(point(startX, startY), point(midX,midY), point(endX, endY)))
+  }
+  const svgPath = pathOfCubic.map((value) => `C ${value.one.x} ${value.one.y}, ${value.two.x} ${value.two.y}, ${value.end.x} ${value.end.y}`)
+      .reduce((left, right) => ` ${left} ${right}`, `M ${origin.x} ${origin.y}`);
+
+  console.dir(pathOfCubic);
+  console.dir(svgPath);
+  const timelinePath = document.getElementById('timeline-path');
+  timelinePath.setAttribute('d', svgPath);
+</script>
+
+</body>
+</html>
