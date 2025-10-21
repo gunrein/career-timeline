@@ -332,24 +332,33 @@ web browser. By relying only on web standards this page should stay working for 
   // Draw the initial spiral
   updateSpiral(0);
 
+  /**
+   * Moves the selected career segment position in the direction provided by `nextElementFunction`
+   * @param {function(HTMLDetailsElement): Element} nextElementFunction
+   */
+  function movePosition(nextElementFunction) {
+    const openDetails = document.querySelector("details[open]");
+    const nextElement = nextElementFunction(openDetails);
+    if (!openDetails) {
+      const firstDetails = document.querySelector("details");
+      if (firstDetails) {
+        firstDetails.open = true;
+      }
+    } else if (nextElement) {
+      nextElement.open = true;
+    }
+  }
+
   // Keyboard navigation. The logic is simple and takes advantage of the behavior of named `details` open and the
   // structure of the document.
   // By opening the previous or next sibling to the currently-open `details` element the 'toggle' event handling
-  // will be triggered and the correct spot in the timeline will be selected and rendered. One downside of this
-  // approach is that if no `details` is already open then keyboard navigation will do nothing, but that can be
-  // a future improvement.
+  // will be triggered and the correct spot in the timeline will be selected and rendered.
   // Use `w` for earlier and `s` for later to avoid arrow keys causing scrolling.
   document.addEventListener('keydown', (event) => {
     if (event.key === 'w') {
-      const openDetails = document.querySelector("details[open]");
-      if (openDetails?.previousElementSibling) {
-        openDetails.previousElementSibling.open = true;
-      }
+      movePosition((element) => element?.previousElementSibling);
     } else if (event.key === 's') {
-      const openDetails = document.querySelector("details[open]");
-      if (openDetails?.nextElementSibling) {
-        openDetails.nextElementSibling.open = true;
-      }
+      movePosition((element) => element?.nextElementSibling);
     }
   })
 </script>
