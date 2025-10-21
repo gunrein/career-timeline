@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+This file is a self-contained web page with no external dependencies besides a modern standards-compliant
+web browser. By relying only on web standards this page should stay working for longer without maintenance.
+-->
 <head>
   <meta charset="UTF-8">
   <title>Career timeline as of October 2025</title>
@@ -8,6 +12,28 @@
     main {
       display: flex;
       flex-wrap: wrap;
+    }
+
+    details {
+      border: 1px solid #aaaaaa;
+      border-radius: 4px;
+      padding: 0.5em 0.5em 0;
+      cursor: pointer;
+    }
+
+    summary {
+      font-weight: bold;
+      margin: -0.5em -0.5em 0;
+      padding: 0.5em;
+    }
+
+    details[open] {
+      padding: 0.5em;
+    }
+
+    details[open] summary {
+      border-bottom: 1px solid #aaaaaa;
+      margin-bottom: 0.5em;
     }
   </style>
 </head>
@@ -31,17 +57,55 @@
   </section>
 
   <section>
-    <h2>Details</h2>
-    <p id="detailsLabel">Label</p>
-    <p id="detailsMonth">June 2023</p>
-    <ul id="detailsHighlights">
-      <li>Highlight 1</li>
-      <li>Highlight 2</li>
-    </ul>
+    <details name="career-steps"
+             open>
+      <summary>Event 1</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps">
+      <summary>Event 2</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps">
+      <summary>Event 3</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps">
+      <summary>Event 4</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
   </section>
 </main>
 
 <script>
+  // @ts-check
+  // Type definitions
+  // Even though JavaScript doesn't have a way to declare types, TypeScript JSDoc allows tooling to type check
+  // JavaScript. https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html
+
   /**
    * @typedef {Object} MonthYear
    * @property {number} month (1 is January, 12 is December)
@@ -79,16 +143,6 @@
     }
   }
 
-  const careerEvents = [
-    // event("Event 0", month(1, 1986), []),
-    event("Event 1", month(1, 2001), []),
-    event("Event 2", month(8, 2004), []),
-    event("Event 3", month(4, 2010), []),
-    event("Event 4", month(2, 2011), []),
-    event("Event 5", month(8, 2013), []),
-    event("Event 6", month(10, 2020), []),
-  ];
-
   /**
    * @typedef {Object} Point
    * @property {number} x
@@ -121,6 +175,17 @@
   function pathCubic(one, two, end) {
     return { one, two, end };
   }
+
+  // TODO parse from `details`
+  const careerEvents = [
+    // event("Event 0", month(1, 1986), []),
+    event("Event 1", month(1, 2001), []),
+    event("Event 2", month(8, 2004), []),
+    event("Event 3", month(4, 2010), []),
+    event("Event 4", month(2, 2011), []),
+    event("Event 5", month(8, 2013), []),
+    event("Event 6", month(10, 2020), []),
+  ];
 
   /**
    * Updates the spiral visualization to represent the progression until `eventIndex`
@@ -248,20 +313,24 @@
     const timelineSvg = document.getElementById('timeline-svg');
     // Remove all the existing path and circle elements before replacing them.
     // An improvement would be to animate the change in the spiral shape.
-    timelineSvg.querySelectorAll(":scope > path, :scope > circle").forEach((element) => element.remove());
+    timelineSvg.querySelectorAll(":scope > path, :scope > circle")
+        .forEach((element) => element.remove());
 
     // Add the new paths
     newElements.forEach((element) => timelineSvg.appendChild(element));
   }
 
-  const eventIndexInput = document.getElementById('event-index');
-  eventIndexInput.setAttribute('max', String(careerEvents.length - 1));
-  eventIndexInput.addEventListener('input', (event) => {
-    updateSpiral(Number(event.target.value));
-  });
+  // Attach an event listener to each `details` element with the name `career-steps`.
+  document.querySelectorAll('details[name="career-steps"]')
+      .forEach((element, index) => element.addEventListener("toggle", (event) => {
+        if (event.target.open) {
+          // TODO instead of document order index, change updateSpiral to take the step data itself so the index doesn't matter any more
+          updateSpiral(index);
+        }
+      }));
 
   // Draw the initial spiral
-  updateSpiral(Number(eventIndexInput.value));
+  updateSpiral(0);
 </script>
 
 </body>
