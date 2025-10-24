@@ -41,12 +41,6 @@ web browser. By relying only on web standards this page should stay working for 
 
 <main>
   <section class="timeline-container">
-    <h2>Timeline</h2>
-    <div>
-      <input type="range" id="event-index" name="event-index" min="0" max="6" value="0" />
-      <label for="event-index">Event Index</label>
-    </div>
-
     <svg width="800" height="800" id="timeline-svg">
       <defs>
         <marker id="circle" viewBox="0 0 10 10" markerUnits="strokeWidth" markerWidth="6" markerHeight="6" refX="5" refY="5" orient="auto">
@@ -57,9 +51,15 @@ web browser. By relying only on web standards this page should stay working for 
   </section>
 
   <section>
+    <!-- Note that the <details> elements should be in chronological order -->
     <details name="career-steps"
+             data-start-month="1"
+             data-start-year="2001"
+             data-end-month="8"
+             data-end-year="2004"
              open>
-      <summary>Event 1</summary>
+
+      <summary><span class="company">Company 1</span><span class="date-range">January 2001-August 2004</span></summary>
       <p>Label</p>
       <p>June 2023</p>
       <ul>
@@ -68,8 +68,13 @@ web browser. By relying only on web standards this page should stay working for 
       </ul>
     </details>
 
-    <details name="career-steps">
-      <summary>Event 2</summary>
+    <details name="career-steps"
+             data-start-month="8"
+             data-start-year="2004"
+             data-end-month="4"
+             data-end-year="2010">
+
+      <summary>Company 2</summary>
       <p>Label</p>
       <p>June 2023</p>
       <ul>
@@ -78,8 +83,13 @@ web browser. By relying only on web standards this page should stay working for 
       </ul>
     </details>
 
-    <details name="career-steps">
-      <summary>Event 3</summary>
+    <details name="career-steps"
+             data-start-month="1"
+             data-start-year="2011"
+             data-end-month="8"
+             data-end-year="2011">
+
+      <summary>Company 3</summary>
       <p>Label</p>
       <p>June 2023</p>
       <ul>
@@ -88,8 +98,58 @@ web browser. By relying only on web standards this page should stay working for 
       </ul>
     </details>
 
-    <details name="career-steps">
-      <summary>Event 4</summary>
+    <details name="career-steps"
+             data-start-month="8"
+             data-start-year="2011"
+             data-end-month="7"
+             data-end-year="2013">
+
+      <summary>Company 4</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="8"
+             data-start-year="2013"
+             data-end-month="11"
+             data-end-year="2020">
+
+      <summary>Company 5</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="10"
+             data-start-year="2021"
+             data-end-month="2"
+             data-end-year="2023">
+
+      <summary>Company 6</summary>
+      <p>Label</p>
+      <p>June 2023</p>
+      <ul>
+        <li>Highlight 1</li>
+        <li>Highlight 2</li>
+      </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="10"
+             data-start-year="2023"
+             data-end-month="10"
+             data-end-year="2025">
+
+      <summary>Company 7</summary>
       <p>Label</p>
       <p>June 2023</p>
       <ul>
@@ -101,6 +161,8 @@ web browser. By relying only on web standards this page should stay working for 
 </main>
 
 <script>
+  "use strict";
+
   // @ts-check
   // Type definitions
   // Even though JavaScript doesn't have a way to declare types, TypeScript JSDoc allows tooling to type check
@@ -108,7 +170,7 @@ web browser. By relying only on web standards this page should stay working for 
 
   /**
    * @typedef {Object} MonthYear
-   * @property {number} month (1 is January, 12 is December)
+   * @property {number} month (1 represents January, 12 represents December)
    * @property {number} year the calendar year
    */
   /**
@@ -120,26 +182,6 @@ web browser. By relying only on web standards this page should stay working for 
     return {
       month,
       year
-    }
-  }
-
-  /**
-   * @typedef {Object} Event
-   * @property {String} label
-   * @property {MonthYear} month
-   * @property {String[]} highlights
-   */
-  /**
-   * @param {String} label
-   * @param {MonthYear} month
-   * @param {String[]} highlights
-   * @return {Event}
-   */
-  function event(label, month, highlights) {
-    return {
-      label,
-      month,
-      highlights
     }
   }
 
@@ -159,35 +201,6 @@ web browser. By relying only on web standards this page should stay working for 
   }
 
   /**
-   * Represents a `C` cubic bezier curve in an SVG `<path>` element.
-   * @typedef {Object} PathCubic
-   * @property {Point} one
-   * @property {Point} two
-   * @property {Point} end
-   */
-  /**
-   * Constructs a PathCubic
-   * @param {Point} one
-   * @param {Point} two
-   * @param {Point} end
-   * @return {PathCubic}
-   */
-  function pathCubic(one, two, end) {
-    return { one, two, end };
-  }
-
-  // TODO parse from `details`
-  const careerEvents = [
-    // event("Event 0", month(1, 1986), []),
-    event("Event 1", month(1, 2001), []),
-    event("Event 2", month(8, 2004), []),
-    event("Event 3", month(4, 2010), []),
-    event("Event 4", month(2, 2011), []),
-    event("Event 5", month(8, 2013), []),
-    event("Event 6", month(10, 2020), []),
-  ];
-
-  /**
    * Updates the spiral visualization to represent the progression until `eventIndex`
    * @param {number} eventIndex the event to stop the spiral rendering at
    */
@@ -203,13 +216,10 @@ web browser. By relying only on web standards this page should stay working for 
      * The `beta` parameter for the polar equation `r = beta * phi`.
      * @type number
      */
-    const beta = 3;
+    const beta = 1.5;
 
     /** @type {Point} */
     const origin = point(250, 250);
-
-    /** @type {PathCubic[]} */
-    const pathOfCubic = [];
 
     /**
      * @typedef {Object} PathSegment
@@ -226,17 +236,25 @@ web browser. By relying only on web standards this page should stay working for 
       return { start, end }
     }
 
+    // This query assumes the only <details> elements in the document are those with date information.
+    const startElement = document.querySelector('details');
+    const startMonth = month(Number(startElement.dataset.startMonth), Number(startElement.dataset.startYear));
     /**
      * @type {PathSegment[]}
      */
-    const segments = careerEvents.slice(0, eventIndex + 1)
-        // Transform each event into a count of months from the origin of the spiral to the end of the moment of the event
-        .map((current, index, arr) => monthDelta(arr[0].month, current.month))
-        // Record each segment as a start and end for easier rendering below
-        .reduce((accumulator, current, index, arr) => {
-          const start = index === 0 ? current : arr[index - 1];
-          return [...accumulator, pathSegment(start, current)]
-        }, []);
+    const segments = [];
+    Array.from(document.querySelectorAll("details"))
+        // Only use the elements up to the `open` <details> element
+        .slice(0, eventIndex + 1)
+        // Create the segments for the selected part of the timeline
+        .forEach((element) => {
+          const start = month(Number(element.dataset.startMonth), Number(element.dataset.startYear));
+          const end = month(Number(element.dataset.endMonth), Number(element.dataset.endYear));
+          // Find the distance from the starting month of the visualization and the start of this segment.
+          // Do the same for the end.
+          const segment = pathSegment(monthDelta(startMonth, start), monthDelta(startMonth, end));
+          segments.push(segment);
+        });
 
     /**
      * Calculates the number of months between `earlier` and `later`.
@@ -249,7 +267,7 @@ web browser. By relying only on web standards this page should stay working for 
     }
 
     const newElements = [];
-    segments.forEach((segment) => {
+    segments.forEach((segment, index) => {
       const segmentLength = segment.end - segment.start;
       if (segmentLength === 0) {
         // Draw a point rather than a path
@@ -270,17 +288,18 @@ web browser. By relying only on web standards this page should stay working for 
         newElements.push(circleElement);
       } else {
         // Draw a path
+        /** @type {String} */
+        let pathCommands = '';
         for (let i = segment.start; i < segment.end; i++) {
           // Each segment of the spiral is rendered as an SVG `path` utilizing the `C` command
           // for a cubic Bézier curve.
-          // The starting point for `C` is the ending of the previous path segment.
-          const startPhi = (i - 1) * radiansPerMonth;
+          const startPhi = i * radiansPerMonth;
           const startR = beta * startPhi;
           const startX = startR * Math.cos(startPhi) + origin.x;
           const startY = startR * Math.sin(startPhi) + origin.y;
 
-          // The ending point for `C` is the location of the current month.
-          const endPhi = i * radiansPerMonth;
+          // The ending point for `C` is the next month
+          const endPhi = (i + 1) * radiansPerMonth;
           const endR = beta * endPhi;
           const endX = endR * Math.cos(endPhi) + origin.x;
           const endY = endR * Math.sin(endPhi) + origin.y;
@@ -293,11 +312,14 @@ web browser. By relying only on web standards this page should stay working for 
           const midX = midR * Math.cos(midPhi) + origin.x;
           const midY = midR * Math.sin(midPhi) + origin.y;
 
-          pathOfCubic.push(pathCubic(point(startX, startY), point(midX,midY), point(endX, endY)))
+          // The path needs to start with `M` with should match the first `C` segment start location
+          if (i === segment.start) {
+            // The starting position of the path
+            pathCommands = `M ${startX} ${startY}`;
+          }
+          // Append the next C location
+          pathCommands = pathCommands + `C ${startX} ${startY}, ${midX} ${midY}, ${endX} ${endY}`;
         }
-        // Construct
-        const pathCommands = pathOfCubic.map((value) => `C ${value.one.x} ${value.one.y}, ${value.two.x} ${value.two.y}, ${value.end.x} ${value.end.y}`)
-            .reduce((left, right) => ` ${left} ${right}`, `M ${origin.x} ${origin.y}`);
 
         const pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
         pathElement.setAttribute("d", pathCommands);
@@ -324,13 +346,9 @@ web browser. By relying only on web standards this page should stay working for 
   document.querySelectorAll('details[name="career-steps"]')
       .forEach((element, index) => element.addEventListener("toggle", (event) => {
         if (event.target.open) {
-          // TODO instead of document order index, change updateSpiral to take the step data itself so the index doesn't matter any more
           updateSpiral(index);
         }
       }));
-
-  // Draw the initial spiral
-  updateSpiral(0);
 
   /**
    * Moves the selected career segment position in the direction provided by `nextElementFunction`
