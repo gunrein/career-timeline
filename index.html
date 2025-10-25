@@ -21,17 +21,28 @@ web browser. By relying only on web standards this page should stay working for 
       cursor: pointer;
     }
 
-    summary {
-      font-weight: bold;
-      margin: -0.5em -0.5em 0;
-      padding: 0.5em;
-    }
-
     details[open] {
       padding: 0.5em;
     }
 
-    details[open] summary {
+    details > summary {
+      list-style: none;
+      font-weight: bold;
+      margin: -0.5em -0.5em 0;
+      padding: 0.5em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details > summary span.date-header {
+      font-weight: normal;
+    }
+
+    details[open] > summary {
       border-bottom: 1px solid #aaaaaa;
       margin-bottom: 0.5em;
     }
@@ -51,36 +62,60 @@ web browser. By relying only on web standards this page should stay working for 
   </section>
 
   <section>
-    <!-- Note that the <details> elements should be in chronological order -->
-    <details name="career-steps"
-             data-start-month="1"
-             data-start-year="2001"
-             data-end-month="8"
-             data-end-year="2004"
-             open>
+    <h2>Career highlights</h2>
 
-      <summary><span class="company">Company 1</span><span class="date-range">January 2001-August 2004</span></summary>
-      <p>Label</p>
-      <p>June 2023</p>
-      <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
-      </ul>
-    </details>
+    <!-- Note that the <details> elements should be in chronological order -->
 
     <details name="career-steps"
              data-start-month="8"
              data-start-year="2004"
              data-end-month="4"
-             data-end-year="2010">
-
-      <summary>Company 2</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+             data-end-year="2010"
+             open>
+      <summary>
+        Jive Software
+        <span class="date-header">August 2004 - April 2010</span>
+      </summary>
+      <p>
+        Enterprise collaboration tools; IPO in 2011
+      </p>
+      <p>
+        Engineering Manager, Senior Product Manager, Support Engineer
+      </p>
+      <p>
+        Joined when the company was bootstrapped and 7 people; grew to about ~350 people while there.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>
+          Started, led, and managed the customer engineering team which was brought in when there were
+          particularly challenging technical issues with customer deployments
+        </li>
+        <li>
+          Product managed Jive's XMPP-based IM server and client as well as the flagship Clearspace product
+        </li>
+        <li>
+          Established the support department as the first support engineer focused on scaling and
+          troubleshooting the Java-based server and interfaces to various relational DBs (usually Postgres,
+          Oracle, or DB2)
+        </li>
       </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="4"
+             data-start-year="2010"
+             data-end-month="1"
+             data-end-year="2011">
+      <summary>
+        Parenting break
+        <span class="date-header">April 2010 - January 2011</span>
+      </summary>
+      <p>
+        Time with Elliot as a baby
+      </p>
+      <p>
+        Math classes at Portland State University
+      </p>
     </details>
 
     <details name="career-steps"
@@ -88,13 +123,26 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-year="2011"
              data-end-month="8"
              data-end-year="2011">
-
-      <summary>Company 3</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+      <summary>
+        Jama Software
+        <span class="date-header">January 2011 - August 2011</span>
+      </summary>
+      <p>
+        Requirements management for complex products and projects
+      </p>
+      <p>
+        Product Manager
+      </p>
+      <p>
+        A brief tenure focused on product management for the company's requirements management product.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>Organized and led the company's first CAB (customer advisory board) meeting</li>
+        <li>Collaborated with the CEO and co-founder on product direction</li>
+        <li>Worked closely with the VP of Engineering, engineering team, and designers on requirements and
+          designs</li>
+        <li>Engaged customers, sales engineers, and sales reps around user needs, buyer needs, designs, and
+          the roadmap</li>
       </ul>
     </details>
 
@@ -103,13 +151,28 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-year="2011"
              data-end-month="7"
              data-end-year="2013">
-
-      <summary>Company 4</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+      <summary>
+        Cedexis
+        <span class="date-header">August 2011 - July 2013</span>
+      </summary>
+      <p>
+        DNS-based adaptive global load balancer using RUM for intelligence
+      <p>
+      <p>
+        Director of Products
+      </p>
+      <p>
+        Responsible for product management and design for the RUM (real user monitoring) and DNS-based
+        adaptive global load balancer products.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>Collaborated with the CEO and co-founder on product direction</li>
+        <li>
+          Worked closely with the VP of Engineering, engineering team, and designers on requirements and
+          designs; programmed small parts of browser UI
+        </li>
+        <li>Worked with sales engineers to understand challenges and opportunities in the field</li>
+        <li>Engaged customers around user needs, buyer needs, designs, and the roadmap</li>
       </ul>
     </details>
 
@@ -119,13 +182,44 @@ web browser. By relying only on web standards this page should stay working for 
              data-end-month="11"
              data-end-year="2020">
 
-      <summary>Company 5</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+      <summary>
+        New Relic
+        <span class="date-header">August 2013 - November 2020</span>
+      </summary>
+      <p>
+        Monitoring and observability solution
+      </p>
+      <p>
+        Group VP of Engineering, Group VP of Product, Director of Product, Principal Product Manager, Product Manager
+      </p>
+      <p>
+        Progressively took on more responsibility starting in product management then moved into engineering
+        as the company grew from ~350 to ~2200 people. The largest engineering group I was responsible for was between 140 and 150 people.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>
+          At various times led engineering and/or product management for the APM, Infrastructure, Browser,
+          Synthetics, Logging, Serverless, and parts of the platform (not all at once)
+        </li>
+        <li>
+          Advocated for and sponsored New Relic's participation in OpenTelemetry and led the engineering group who published New
+          Relic's proprietary agents as open source (some were source available before)
+        </li>
+        <li>Coached and mentored leaders; helped grow organizations and teams; fostered the culture</li>
+        <li>Helped establish product management as a function</li>
       </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="11"
+             data-start-year="2020"
+             data-end-month="10"
+             data-end-year="2021">
+      <summary>
+        Startup exploration
+        <span class="date-header">November 2020 - October 2021</span>
+      </summary>
+      Explored several startup ideas
     </details>
 
     <details name="career-steps"
@@ -133,14 +227,61 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-year="2021"
              data-end-month="2"
              data-end-year="2023">
-
-      <summary>Company 6</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+      <summary>
+        Hasura
+        <span class="date-header">October 2021 - February 2023</span>
+      </summary>
+      <p>
+        Open source-core startup for automatic creation of APIs databases
+      </p>
+      <p>
+        CTO, SVP Product
+      </p>
+      <p>
+        At Hasura I helped clarify the product and technical strategies while I led the growth and maturation of engineering,
+        product management, and product design into a ~100 person organization.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>
+          Made architectural improvements in all areas of the product and services in support of improving end-user developer experience
+        </li>
+        <li>
+          Push the transition to expand past the original codebase implemented in Haskell to take advantage of Rust (runtime performance) and Java (library ecosystem for database drivers)
+        </li>
+        <li>
+          Hired strong leaders for engineering and product management; invested in developer experience, product
+          quality, faster lead time and release cadence (from twice per year to every two weeks), architecture
+          improvements, documentation team, and product analytics
+        </li>
+        <li>
+          Reorganized Engineering, PM, and Design to increase connection to users, increase team satisfaction,
+          reduce context switching, increase focus, increase ownership, and reduce lead time
+        </li>
+        <li>
+          Collaborated with the executive team on business strategy, product strategy, pricing, and packaging;
+          increased transparency through weekly, monthly, and quarterly updates
+        </li>
+        <li>
+          Improved processes, tools, and documentation to foster a psychologically safe learning environment that
+          captured knowledge regularly; DORA metrics, incident response, first formal reviews, structure and checklists
+          for improvements, releases, and launches
+        </li>
+        <li>
+          Prototyped syntax for new way to express models and relationships
+        </li>
       </ul>
+    </details>
+
+    <details name="career-steps"
+             data-start-month="2"
+             data-start-year="2023"
+             data-end-month="10"
+             data-end-year="2023">
+      <summary>
+        Startup exploration
+        <span class="date-header">February 2023 - October 2023</span>
+      </summary>
+      Explored several more startup ideas
     </details>
 
     <details name="career-steps"
@@ -148,13 +289,32 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-year="2023"
              data-end-month="10"
              data-end-year="2025">
-
-      <summary>Company 7</summary>
-      <p>Label</p>
-      <p>June 2023</p>
+      <summary>
+        Reclaim.ai / Dropbox
+        <span class="date-header">October 2023 - present</span>
+      </summary>
+      <p>
+        Intelligent calendar automation for busy professionals
+      </p>
+      <p>
+        Principal Software Engineer, Architect
+      </p>
+      <p>
+        Primarily focused on software engineering and helping with product management &amp; design.
+      </p>
       <ul>
-        <li>Highlight 1</li>
-        <li>Highlight 2</li>
+        <li>
+          Improve core prioritization and scheduling algorithms
+        </li>
+        <li>
+          Lead the technology efforts for new features and improvements
+        </li>
+        <li>
+          Various platform improvements such as introducing partition table use and Temporal
+        </li>
+        <li>
+          Explored use of LLMs for specific use cases
+        </li>
       </ul>
     </details>
   </section>
