@@ -91,6 +91,14 @@ web browser. By relying only on web standards this page should stay working for 
       fill: var(--accent-color);
       stroke: none;
     }
+
+    .month-label {
+      fill: var(--foreground-color);
+      font-size: 12px;
+      font-family: sans-serif;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
   </style>
 </head>
 <body>
@@ -475,7 +483,11 @@ web browser. By relying only on web standards this page should stay working for 
      */
     const svgWidth = Number(timelineSvg.clientWidth);
     const totalMonths = segments.at(-1).end;
-    const beta = (svgWidth * 0.07) / (totalMonths / 12)
+    const beta = (svgWidth * 0.06) / (totalMonths / 12)
+
+    // The starting month for the segments may not be January, so calculate an offset.
+    // Since the loops and math below are 0-indexed, subtract 1 from the month indicated in the data.
+    const monthOffset = startMonth.month - 1;
 
     // Calculate the center of the svg element as the origin for the visualization.
     // Since the svg element is a square, the location of the X and Y coordinates is the same.
@@ -485,21 +497,22 @@ web browser. By relying only on web standards this page should stay working for 
 
     const newElements = [];
     segments.forEach(segment => {
-      const segmentLength = segment.end - segment.start;
       // Note: this does not support zero-length segments
       // Draw a path
       /** @type {String} */
       let pathCommands = '';
       for (let i = segment.start; i < segment.end; i++) {
+        const monthIndex = i + monthOffset;
+
         // Each segment of the spiral is rendered as an SVG `path` utilizing the `C` command
         // for a cubic Bézier curve.
-        const startPhi = i * radiansPerMonth;
+        const startPhi = monthIndex * radiansPerMonth - (0.5 * Math.PI);
         const startR = beta * startPhi;
         const startX = startR * Math.cos(startPhi) + origin.x;
         const startY = startR * Math.sin(startPhi) + origin.y;
 
         // The ending point for `C` is the next month
-        const endPhi = (i + 1) * radiansPerMonth;
+        const endPhi = (monthIndex + 1) * radiansPerMonth - (0.5 * Math.PI);
         const endR = beta * endPhi;
         const endX = endR * Math.cos(endPhi) + origin.x;
         const endY = endR * Math.sin(endPhi) + origin.y;
@@ -527,10 +540,40 @@ web browser. By relying only on web standards this page should stay working for 
       newElements.push(pathElement);
     });
 
-    // Remove all the existing path and circle elements before replacing them.
+    // Remove all the existing path, circle, line, and text elements before replacing them.
     // An improvement would be to animate the change in the spiral shape.
-    timelineSvg.querySelectorAll(":scope > path, :scope > circle")
+    timelineSvg.querySelectorAll(":scope > path, :scope > circle, :scope > line, :scope > text")
         .forEach((element) => element.remove());
+
+    // Add labels for the months
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'];
+    monthNames.forEach((name, index) => {
+      const rayPhi = index * radiansPerMonth - (0.5 * Math.PI);
+
+      // The distance from the origin to the label along the ray for the month
+      const labelDistance = svgWidth * 0.45;
+      const labelX = labelDistance * Math.cos(rayPhi) + origin.x;
+      const labelY = labelDistance * Math.sin(rayPhi) + origin.y;
+
+      const labelElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      labelElement.setAttribute("x", labelX.toString());
+      labelElement.setAttribute("y", labelY.toString());
+      labelElement.textContent = name;
+      labelElement.classList.add('month-label');
+      newElements.push(labelElement);
+    });
 
     // Add the new paths
     newElements.forEach((element) => timelineSvg.appendChild(element));
