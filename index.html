@@ -11,7 +11,14 @@ web browser. By relying only on web standards this page should stay working for 
   <style>
     main {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      width: 99vw;
+    }
+
+    main > section:last-child {
+      flex: 1;
+      min-width: 0;
+      margin-left: auto;
     }
 
     details {
