@@ -12,7 +12,7 @@ web browser. By relying only on web standards this page should stay working for 
     main {
       display: flex;
       flex-wrap: nowrap;
-      width: 99vw;
+      width: 98vw;
     }
 
     main > section:last-child {
@@ -53,13 +53,23 @@ web browser. By relying only on web standards this page should stay working for 
       border-bottom: 1px solid #aaaaaa;
       margin-bottom: 0.5em;
     }
+
+    /*
+    Set the size of the timeline visualization based on the size of the window.
+    If the window is wide enough, use the window height, but if the window is narrow
+    then use the width to avoid squeezing the details too far.
+    */
+    #timeline-svg {
+      width: min(100vh, 70vw);
+      height: min(100vh, 70vw);
+    }
   </style>
 </head>
 <body>
 
 <main>
-  <section class="timeline-container">
-    <svg width="800" height="800" id="timeline-svg">
+  <section>
+    <svg id="timeline-svg">
       <defs>
         <marker id="circle" viewBox="0 0 10 10" markerUnits="strokeWidth" markerWidth="6" markerHeight="6" refX="5" refY="5" orient="auto">
           <circle r="2" cx="5" cy="5" fill="gold" />
@@ -372,29 +382,20 @@ web browser. By relying only on web standards this page should stay working for 
    * @param {number} eventIndex the event to stop the spiral rendering at
    */
   function updateSpiral(eventIndex) {
-
-    // The timeline visualize is rendered as an Archimedean spiral
+    // The timeline visualization is rendered as an Archimedean spiral
     // https://en.wikipedia.org/wiki/Archimedean_spiral
     // One cycle of the spiral represents a year, so the radians per month is calculated as
     // 2*pi radians per year = 2*pi / 12 radians per month
     const radiansPerMonth = Math.PI / 6;
 
     /**
-     * The `beta` parameter for the polar equation `r = beta * phi`.
-     * @type number
-     */
-    const beta = 1.5;
-
-    /** @type {Point} */
-    const origin = point(250, 250);
-
-    /**
+     * PathSegments are used to structure the data for visualization.
      * @typedef {Object} PathSegment
      * @property {number} start the count of months from the origin month
      * @property {number} end the count of months from start
      */
-
     /**
+     * A constructor for PathSegments.
      * @param {number} start
      * @param {number} end
      * @returns {PathSegment}
@@ -403,14 +404,25 @@ web browser. By relying only on web standards this page should stay working for 
       return { start, end }
     }
 
-    // This query assumes the only <details> elements in the document are those with date information.
+    /**
+     * Calculates the number of months between `earlier` and `later`.
+     * @param {MonthYear} earlier
+     * @param {MonthYear} later
+     * @returns {number}
+     */
+    function monthDelta(earlier, later) {
+      return (later.year - earlier.year) * 12 + (later.month - earlier.month);
+    }
+
+    // Determine the startMonth and the segments that compose the visualization for the given eventIndex.
+    // This element query assumes the only <details> elements in the document are those with date information.
     const startElement = document.querySelector('details');
     const startMonth = month(Number(startElement.dataset.startMonth), Number(startElement.dataset.startYear));
     /**
      * @type {PathSegment[]}
      */
     const segments = [];
-    Array.from(document.querySelectorAll("details"))
+    Array.from(document.querySelectorAll('details'))
         // Only use the elements up to the `open` <details> element
         .slice(0, eventIndex + 1)
         // Create the segments for the selected part of the timeline
@@ -423,15 +435,25 @@ web browser. By relying only on web standards this page should stay working for 
           segments.push(segment);
         });
 
+    // A reference to the svg element for the timeline visualization is needed for several calculations and
+    // to update the element with the latest rendering of the spiral.
+    let timelineSvg = document.querySelector('#timeline-svg');
+
     /**
-     * Calculates the number of months between `earlier` and `later`.
-     * @param {MonthYear} earlier
-     * @param {MonthYear} later
-     * @returns {number}
+     * The `beta` parameter for the polar equation `r = beta * phi`.
+     * Calculated dynamically based on the amount of time being rendered at the given eventIndex.
+     * Weights were found experimentally.
+     * @type number
      */
-    function monthDelta(earlier, later) {
-      return (later.year - earlier.year) * 12 + (later.month - earlier.month);
-    }
+    const svgWidth = Number(timelineSvg.clientWidth);
+    const totalMonths = segments.at(-1).end;
+    const beta = (svgWidth * 0.07) / (totalMonths / 12)
+
+    // Calculate the center of the svg element as the origin for the visualization.
+    // Since the svg element is a square, the location of the X and Y coordinates is the same.
+    const originX_Y = svgWidth / 2;
+    /** @type {Point} */
+    const origin = point(originX_Y, originX_Y);
 
     const newElements = [];
     segments.forEach((segment, index) => {
@@ -499,7 +521,6 @@ web browser. By relying only on web standards this page should stay working for 
       }
     });
 
-    const timelineSvg = document.getElementById('timeline-svg');
     // Remove all the existing path and circle elements before replacing them.
     // An improvement would be to animate the change in the spiral shape.
     timelineSvg.querySelectorAll(":scope > path, :scope > circle")
@@ -545,7 +566,28 @@ web browser. By relying only on web standards this page should stay working for 
     } else if (event.key === 's') {
       movePosition((element) => element?.nextElementSibling);
     }
-  })
+  });
+
+  // React to the size of the timeline-svg element changing so that the visualization can be redrawn.
+  // This most commonly happens when the browser window size changes.
+  // Use a brief delay to debounce repeated resize events so that the rendering isn't done excessively.
+  let resizeTimeout;
+  const resizeObserver = new ResizeObserver(ignored => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      const openDetails = document.querySelector('details[open]');
+      if (openDetails) {
+        // Find the correct index to update the spiral to and update it
+        const detailsArray = Array.from(document.querySelectorAll('details'));
+        const eventIndex = detailsArray.indexOf(openDetails);
+        updateSpiral(eventIndex);
+      } else {
+        // No step was open so call movePosition to select one using its logic
+        movePosition(element => element);
+      }
+    });
+  });
+  resizeObserver.observe(document.querySelector('#timeline-svg'));
 </script>
 
 </body>
