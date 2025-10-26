@@ -13,10 +13,9 @@ web browser. By relying only on web standards this page should stay working for 
     CSS variables for easier changes to colors
      */
     :root {
-      --background-color: #008748;
-      --foreground-color: #F8F8F8;
-      --accent-color: #FCE562;
-      --outline-color: #006B35;
+      --background-color: #FFFFFF;
+      --foreground-color: #2E5D31;
+      --outline-color: #aaaaaa;
     }
 
     body {
@@ -81,20 +80,19 @@ web browser. By relying only on web standards this page should stay working for 
 
     path.spiral-segment {
       fill: none;
-      stroke: var(--foreground-color);
-      stroke-width: 2;
+      stroke-width: 4;
       marker-start: url('#circle');
-      marker-end: url('#circle');
     }
 
     circle {
-      fill: var(--accent-color);
-      stroke: none;
+      fill: var(--background-color);
+      stroke: #000000;
     }
 
     .month-label {
       fill: var(--foreground-color);
-      font-size: 12px;
+      font-size: 14px;
+      font-weight: bold;
       font-family: sans-serif;
       text-anchor: middle;
       dominant-baseline: middle;
@@ -108,7 +106,7 @@ web browser. By relying only on web standards this page should stay working for 
     <svg id="timeline-svg">
       <defs>
         <marker id="circle" viewBox="0 0 10 10" markerUnits="strokeWidth" markerWidth="6" markerHeight="6" refX="5" refY="5" orient="auto">
-          <circle r="5" cx="5" cy="5" />
+          <circle r="0.3%" cx="5" cy="5" />
         </marker>
       </defs>
     </svg>
@@ -124,6 +122,8 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-year="2004"
              data-end-month="4"
              data-end-year="2010"
+             data-color="#1b9e77"
+             style="color: #1b9e77"
              open>
       <summary>
         Jive Software
@@ -158,7 +158,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="4"
              data-start-year="2010"
              data-end-month="1"
-             data-end-year="2011">
+             data-end-year="2011"
+             data-color="#d95f02"
+             style="color: #d95f02">
       <summary>
         Parenting break
         <span class="date-header">April 2010 - January 2011</span>
@@ -175,7 +177,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="1"
              data-start-year="2011"
              data-end-month="8"
-             data-end-year="2011">
+             data-end-year="2011"
+             data-color="#7570b3"
+             style="color: #7570b3">
       <summary>
         Jama Software
         <span class="date-header">January 2011 - August 2011</span>
@@ -202,8 +206,10 @@ web browser. By relying only on web standards this page should stay working for 
     <details name="career-steps"
              data-start-month="8"
              data-start-year="2011"
-             data-end-month="7"
-             data-end-year="2013">
+             data-end-month="8"
+             data-end-year="2013"
+             data-color="#1b9e77"
+             style="color: #1b9e77">
       <summary>
         Cedexis
         <span class="date-header">August 2011 - July 2013</span>
@@ -234,8 +240,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="8"
              data-start-year="2013"
              data-end-month="11"
-             data-end-year="2020">
-
+             data-end-year="2020"
+             data-color="#d95f02"
+             style="color: #d95f02">
       <summary>
         New Relic
         <span class="date-header">August 2013 - November 2020</span>
@@ -269,7 +276,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="11"
              data-start-year="2020"
              data-end-month="10"
-             data-end-year="2021">
+             data-end-year="2021"
+             data-color="#7570b3"
+             style="color: #7570b3">
       <summary>
         Startup exploration
         <span class="date-header">November 2020 - October 2021</span>
@@ -281,7 +290,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="10"
              data-start-year="2021"
              data-end-month="2"
-             data-end-year="2023">
+             data-end-year="2023"
+             data-color="#1b9e77"
+             style="color: #1b9e77">
       <summary>
         Hasura
         <span class="date-header">October 2021 - February 2023</span>
@@ -331,7 +342,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="2"
              data-start-year="2023"
              data-end-month="10"
-             data-end-year="2023">
+             data-end-year="2023"
+             data-color="#d95f02"
+             style="color: #d95f02">
       <summary>
         Startup exploration
         <span class="date-header">February 2023 - October 2023</span>
@@ -343,7 +356,9 @@ web browser. By relying only on web standards this page should stay working for 
              data-start-month="10"
              data-start-year="2023"
              data-end-month="10"
-             data-end-year="2025">
+             data-end-year="2025"
+             data-color="#7570b3"
+             style="color: #7570b3">
       <summary>
         Reclaim.ai / Dropbox
         <span class="date-header">October 2023 - present</span>
@@ -433,15 +448,17 @@ web browser. By relying only on web standards this page should stay working for 
      * @typedef {Object} PathSegment
      * @property {number} start the count of months from the origin month
      * @property {number} end the count of months from start
+     * @property {string?} color optional color for the segment. If none is provided, --foreground-color used.
      */
     /**
      * A constructor for PathSegments.
      * @param {number} start
      * @param {number} end
+     * @param {string?} color
      * @returns {PathSegment}
      */
-    function pathSegment(start, end) {
-      return { start, end }
+    function pathSegment(start, end, color) {
+      return { start, end, color }
     }
 
     /**
@@ -466,18 +483,24 @@ web browser. By relying only on web standards this page should stay working for 
         // Only use the elements up to the `open` <details> element
         .slice(0, eventIndex + 1)
         // Create the segments for the selected part of the timeline
-        .forEach((element) => {
-          const start = month(Number(element.dataset.startMonth), Number(element.dataset.startYear));
-          const end = month(Number(element.dataset.endMonth), Number(element.dataset.endYear));
+        .forEach(element => {
+          // Path segments can have specific colors
+          const color = element.dataset.color;
+
           // Find the distance from the starting month of the visualization and the start of this segment.
           // Do the same for the end.
-          const segment = pathSegment(monthDelta(startMonth, start), monthDelta(startMonth, end));
+          const start = month(Number(element.dataset.startMonth), Number(element.dataset.startYear));
+          const end = month(Number(element.dataset.endMonth), Number(element.dataset.endYear));
+          const segment = pathSegment(monthDelta(startMonth, start), monthDelta(startMonth, end), color);
           segments.push(segment);
         });
 
     // A reference to the svg element for the timeline visualization is needed for several calculations and
     // to update the element with the latest rendering of the spiral.
     let timelineSvg = document.querySelector('#timeline-svg');
+
+    // Lookup the value of --foreground-color to use for path color if the segment doesn't have an override
+    const segmentColorDefault = getComputedStyle(document.body).getPropertyValue('--foreground-color');
 
     /**
      * The `beta` parameter for the polar equation `r = beta * phi`.
@@ -540,14 +563,15 @@ web browser. By relying only on web standards this page should stay working for 
 
       const pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
       pathElement.setAttribute("d", pathCommands);
-      pathElement.classList.add('spiral-segment')
+      pathElement.classList.add('spiral-segment');
+      pathElement.style.stroke = segment.color ? segment.color : segmentColorDefault;
       newElements.push(pathElement);
     });
 
     // Remove all the existing path, circle, line, and text elements before replacing them.
     // An improvement would be to animate the change in the spiral shape.
     timelineSvg.querySelectorAll(":scope > path, :scope > circle, :scope > line, :scope > text")
-        .forEach((element) => element.remove());
+        .forEach(element => element.remove());
 
     // Add labels for the months
     const monthNames = [
@@ -580,12 +604,12 @@ web browser. By relying only on web standards this page should stay working for 
     });
 
     // Add the new paths
-    newElements.forEach((element) => timelineSvg.appendChild(element));
+    newElements.forEach(element => timelineSvg.appendChild(element));
   }
 
   // Attach an event listener to each `details` element with the name `career-steps`.
   document.querySelectorAll('details[name="career-steps"]')
-      .forEach((element, index) => element.addEventListener("toggle", (event) => {
+      .forEach((element, index) => element.addEventListener("toggle", event => {
         if (event.target.open) {
           updateSpiral(index);
         }
@@ -613,11 +637,11 @@ web browser. By relying only on web standards this page should stay working for 
   // By opening the previous or next sibling to the currently-open `details` element the 'toggle' event handling
   // will be triggered and the correct spot in the timeline will be selected and rendered.
   // Use `w` for earlier and `s` for later to avoid arrow keys causing scrolling.
-  document.addEventListener('keydown', (event) => {
+  document.addEventListener('keydown', event => {
     if (event.key === 'w') {
-      movePosition((element) => element?.previousElementSibling);
+      movePosition(element => element?.previousElementSibling);
     } else if (event.key === 's') {
-      movePosition((element) => element?.nextElementSibling);
+      movePosition(element => element?.nextElementSibling);
     }
   });
 
