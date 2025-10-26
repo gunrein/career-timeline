@@ -10,12 +10,22 @@ web browser. By relying only on web standards this page should stay working for 
 
   <style>
     /*
-    CSS variables for easier changes to colors
+    CSS variables for easier changes to some colors
      */
     :root {
       --background-color: #FFFFFF;
       --foreground-color: #2E5D31;
       --outline-color: #aaaaaa;
+    }
+
+    /*
+    Set the size of the timeline visualization based on the size of the window.
+    If the window is wide enough, use the window height, but if the window is narrow
+    then use the width to avoid squeezing the details too far.
+    */
+    #timeline-svg {
+      width: min(100vh, 70vw);
+      height: min(100vh, 70vw);
     }
 
     body {
@@ -68,16 +78,6 @@ web browser. By relying only on web standards this page should stay working for 
       margin-bottom: 0.5em;
     }
 
-    /*
-    Set the size of the timeline visualization based on the size of the window.
-    If the window is wide enough, use the window height, but if the window is narrow
-    then use the width to avoid squeezing the details too far.
-    */
-    #timeline-svg {
-      width: min(100vh, 70vw);
-      height: min(100vh, 70vw);
-    }
-
     path.spiral-segment {
       fill: none;
       stroke-width: 4;
@@ -105,8 +105,17 @@ web browser. By relying only on web standards this page should stay working for 
   <section>
     <svg id="timeline-svg">
       <defs>
-        <marker id="circle" viewBox="0 0 10 10" markerUnits="strokeWidth" markerWidth="6" markerHeight="6" refX="5" refY="5" orient="auto">
-          <circle r="0.3%" cx="5" cy="5" />
+        <marker id="circle"
+                viewBox="0 0 10 10"
+                markerUnits="strokeWidth"
+                markerWidth="6"
+                markerHeight="6"
+                refX="5"
+                refY="5"
+                orient="auto">
+          <circle r="0.3%"
+                  cx="5"
+                  cy="5" />
         </marker>
       </defs>
     </svg>
@@ -255,7 +264,8 @@ web browser. By relying only on web standards this page should stay working for 
       </p>
       <p>
         Progressively took on more responsibility starting in product management then moved into engineering
-        as the company grew from ~350 to ~2200 people. The largest engineering group I was responsible for was between 140 and 150 people.
+        as the company grew from ~350 to ~2200 people. The largest engineering group I was responsible for was between
+        140 and 150 people.
       </p>
       <ul>
         <li>
@@ -263,8 +273,8 @@ web browser. By relying only on web standards this page should stay working for 
           Synthetics, Logging, Serverless, and parts of the platform (not all at once)
         </li>
         <li>
-          Advocated for and sponsored New Relic's participation in OpenTelemetry and led the engineering group who published New
-          Relic's proprietary agents as open source (some were source available before)
+          Advocated for and sponsored New Relic's participation in OpenTelemetry and led the engineering group who
+          published New Relic's proprietary agents as open source (some were source available before)
         </li>
         <li>Coached and mentored leaders; helped grow organizations and teams; fostered the culture</li>
         <li>Helped establish product management as a function</li>
@@ -304,15 +314,17 @@ web browser. By relying only on web standards this page should stay working for 
         CTO, SVP Product
       </p>
       <p>
-        At Hasura I helped clarify the product and technical strategies while I led the growth and maturation of engineering,
-        product management, and product design into a ~100 person organization.
+        At Hasura I helped clarify the product and technical strategies while I led the growth and maturation of
+        engineering, product management, and product design into a ~100 person organization.
       </p>
       <ul>
         <li>
-          Made architectural improvements in all areas of the product and services in support of improving end-user developer experience
+          Made architectural improvements in all areas of the product and services in support of improving end-user
+          developer experience
         </li>
         <li>
-          Push the transition to expand past the original codebase implemented in Haskell to take advantage of Rust (runtime performance) and Java (library ecosystem for database drivers)
+          Push the transition to expand past the original codebase implemented in Haskell to take advantage of Rust
+          (runtime performance) and Java (library ecosystem for database drivers)
         </li>
         <li>
           Hired strong leaders for engineering and product management; invested in developer experience, product
@@ -391,6 +403,28 @@ web browser. By relying only on web standards this page should stay working for 
     </details>
   </section>
 </main>
+
+<footer>
+  <h2>About this visualization</h2>
+  <p>
+    This visualization of a career timeline is uses the structure of an
+    <a href="https://en.wikipedia.org/wiki/Archimedean_spiral">Archimedean spiral</a>.
+    Each revolution of the spiral represents one year so the spiral can be viewed as a metaphor for Earth's orbit of
+    the sun.
+  </p>
+  <p>
+    The visualization has no dependencies other than the standard web platform and a browser that implements it.
+    Since it was authored for a presentation to interested high school students, the code is self-contained in a
+    single file and commented for the curious.
+    The color palette is thanks to <a href="https://colorbrewer2.org/">ColorBrewer</a>.
+    <a href="https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html">JSDoc</a> is used to express
+    type information for tooling that supports it. Even though the scripting code is in JavaScript, some tools
+    can use JDoc type information to highlight improvements in the code.
+  </p>
+  <p>
+    This work is released under the <a href="https://en.wikipedia.org/wiki/MIT_License">MIT license</a>.
+  </p>
+</footer>
 
 <script>
   "use strict";
